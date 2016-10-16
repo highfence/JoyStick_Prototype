@@ -80,7 +80,7 @@ void HelloWorld::update(float dt)
 {
 	static float st = 0.0f;
 	st += dt;
-	if (st >= 0.1f) {
+	if (st >= 0.05f) {
 		manager.Update();
 		if (map.GetBoolWasDown(ButtonExit))
 		{
@@ -88,24 +88,53 @@ void HelloWorld::update(float dt)
 		}
 		if (map.GetBoolIsNew(Left))
 		{
-			auto moveLeft = MoveBy::create(0, Vec2(-MOVE_SPEED, 0));
-			this->m_pHead->runAction(moveLeft);
+			m_Direction = Left;
 		}
 		else if (map.GetBoolIsNew(Right))
 		{
-			auto moveRight = MoveBy::create(0, Vec2(MOVE_SPEED, 0));
-			this->m_pHead->runAction(moveRight);
+			m_Direction = Right;
 		}
 		else if (map.GetBoolIsNew(Up))
 		{
-			auto moveUp = MoveBy::create(0, Vec2(0, MOVE_SPEED));
-			this->m_pHead->runAction(moveUp);
+			m_Direction = Up;
 		}
 		else if (map.GetBoolIsNew(Down))
 		{
-			auto moveDown = MoveBy::create(0, Vec2(0, -MOVE_SPEED));
-			this->m_pHead->runAction(moveDown);
+			m_Direction = Down;
 		}
+		else  if (map.GetBoolWasDown(Left)  ||
+			      map.GetBoolWasDown(Right) ||
+			      map.GetBoolWasDown(Up)    ||
+			      map.GetBoolWasDown(Down))
+		{
+			m_Direction = 0;
+		}
+		MoveHead();
 		st = 0.f;
+	}
+}
+
+void HelloWorld::MoveHead()
+{
+	auto moveUp = MoveBy::create(0, Vec2(0, MOVE_SPEED));
+	auto moveDown = MoveBy::create(0, Vec2(0, -MOVE_SPEED));
+	auto moveRight = MoveBy::create(0, Vec2(MOVE_SPEED, 0));
+	auto moveLeft = MoveBy::create(0, Vec2(-MOVE_SPEED, 0));
+
+	switch (m_Direction) {
+		case Up :
+			m_pHead->runAction(moveUp);
+			break;
+		case Down :
+			m_pHead->runAction(moveDown);
+			break;
+		case Right :
+			m_pHead->runAction(moveRight);
+			break;
+		case Left :
+			m_pHead->runAction(moveLeft);
+			break;
+		Default :
+			break;
 	}
 }

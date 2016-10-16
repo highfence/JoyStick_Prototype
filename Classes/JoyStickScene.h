@@ -22,11 +22,12 @@ public:
 
     virtual bool init();
 	void update(float);
+	void MoveHead();
 
     void menuCloseCallback(cocos2d::Ref* pSender);
 
 	cocos2d::Sprite* m_pHead;
-
+	int m_Direction = 0;
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 };
