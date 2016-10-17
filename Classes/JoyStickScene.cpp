@@ -7,6 +7,35 @@
 gainput::InputManager manager;
 gainput::InputMap map(manager);
 
+
+enum Button
+{
+	ButtonExit,
+	Left,
+	Right,
+	Up,
+	Down
+};
+
+enum DIRECTION
+{
+	UP = 1,
+	DOWN = 2,
+	RIGHT = 4,
+	UP_RIGHT = 5,
+	DOWN_RIGHT = 6,
+	LEFT = 8,
+	UP_LEFT = 9,
+	DOWN_LEFT = 10,
+	
+};
+
+const float INIT_HEAD_WIDTH = 0.5f;
+const float INIT_HEAD_HEIGHT = 0.5f;
+const int MOVE_SPEED = 10;
+
+const char headFile[] = "logo.png";
+
 Scene* HelloWorld::createScene()
 {
     auto scene = Scene::create();
@@ -36,6 +65,7 @@ bool HelloWorld::init()
 
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
+
 
     // create menu, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
@@ -86,29 +116,9 @@ void HelloWorld::update(float dt)
 		{
 			exit(0);
 		}
-		if (map.GetBoolIsNew(Left))
-		{
-			m_Direction = Left;
-		}
-		else if (map.GetBoolIsNew(Right))
-		{
-			m_Direction = Right;
-		}
-		else if (map.GetBoolIsNew(Up))
-		{
-			m_Direction = Up;
-		}
-		else if (map.GetBoolIsNew(Down))
-		{
-			m_Direction = Down;
-		}
-		else  if (map.GetBoolWasDown(Left)  ||
-			      map.GetBoolWasDown(Right) ||
-			      map.GetBoolWasDown(Up)    ||
-			      map.GetBoolWasDown(Down))
-		{
-			m_Direction = 0;
-		}
+	
+		CheckNewInput();
+		CheckInputRelease();
 		MoveHead();
 		st = 0.f;
 	}
@@ -120,21 +130,78 @@ void HelloWorld::MoveHead()
 	auto moveDown = MoveBy::create(0, Vec2(0, -MOVE_SPEED));
 	auto moveRight = MoveBy::create(0, Vec2(MOVE_SPEED, 0));
 	auto moveLeft = MoveBy::create(0, Vec2(-MOVE_SPEED, 0));
+	auto moveDOWNLEFT = MoveBy::create(0, Vec2(-MOVE_SPEED, -MOVE_SPEED));
+	auto moveDOWNRIGHT = MoveBy::create(0, Vec2(MOVE_SPEED, -MOVE_SPEED));
+	auto moveUPLEFT = MoveBy::create(0, Vec2(-MOVE_SPEED, MOVE_SPEED));
+	auto moveUPRIGHT = MoveBy::create(0, Vec2(MOVE_SPEED, MOVE_SPEED));
 
-	switch (m_Direction) {
-		case Up :
+	switch (m_keyboardInput) {
+		case DIRECTION::UP : 
 			m_pHead->runAction(moveUp);
 			break;
-		case Down :
+		case DIRECTION::DOWN :
 			m_pHead->runAction(moveDown);
 			break;
-		case Right :
+		case DIRECTION::RIGHT :
 			m_pHead->runAction(moveRight);
 			break;
-		case Left :
+		case DIRECTION::LEFT :
 			m_pHead->runAction(moveLeft);
+			break;
+		case DIRECTION::DOWN_LEFT :
+			m_pHead->runAction(moveDOWNLEFT);
+			break;
+		case DIRECTION::DOWN_RIGHT :
+			m_pHead->runAction(moveDOWNRIGHT);
+			break;
+		case DIRECTION::UP_LEFT :
+			m_pHead->runAction(moveUPLEFT);
+			break;
+		case DIRECTION::UP_RIGHT :
+			m_pHead->runAction(moveUPRIGHT);
 			break;
 		Default :
 			break;
 	}
 }
+
+void HelloWorld::CheckNewInput()
+{
+	if (map.GetBoolIsNew(Left))
+	{
+		m_keyboardInput |= DIRECTION::LEFT;
+	}
+	if (map.GetBoolIsNew(Right))
+	{
+		m_keyboardInput |= DIRECTION::RIGHT;
+	}
+	if (map.GetBoolIsNew(Up))
+	{
+		m_keyboardInput |= DIRECTION::UP;
+	}
+	if (map.GetBoolIsNew(Down))
+	{
+		m_keyboardInput |= DIRECTION::DOWN;
+	}
+}
+
+void HelloWorld::CheckInputRelease()
+{
+	if (map.GetBoolWasDown(Left))
+	{
+		m_keyboardInput &= ~(DIRECTION::LEFT);
+	}
+	if (map.GetBoolWasDown(Right))
+	{
+		m_keyboardInput &= ~(DIRECTION::RIGHT);
+	}
+	if (map.GetBoolWasDown(Up))
+	{
+		m_keyboardInput &= ~(DIRECTION::UP);
+	}
+	if (map.GetBoolWasDown(Down))
+	{
+		m_keyboardInput &= ~(DIRECTION::DOWN);
+	}
+}
+
