@@ -2,8 +2,6 @@
 #define __HELLOWORLD_SCENE_H__
 
 
-
-
 class HelloWorld : public cocos2d::Layer
 {
 public:
@@ -11,6 +9,7 @@ public:
 
     virtual bool init();
 	void update(float);
+	//void MapKeySetting(const gainput::DeviceId);
 	void MoveHead();
 	void CheckNewInput();
 	void CheckInputRelease();

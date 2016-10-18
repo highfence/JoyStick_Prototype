@@ -11,10 +11,13 @@ gainput::InputMap map(manager);
 enum Button
 {
 	ButtonExit,
+	ButtonVibrate,
 	Left,
 	Right,
 	Up,
-	Down
+	Down,
+	LeftStickX,
+	LeftStickY
 };
 
 enum DIRECTION
@@ -35,6 +38,8 @@ const float INIT_HEAD_HEIGHT = 0.5f;
 const int MOVE_SPEED = 10;
 
 const char headFile[] = "logo.png";
+const char ButtonCloseNormal[] = "CloseNormal.png";
+const char ButtonCloseSelected[] = "CloseSelected.png";
 
 Scene* HelloWorld::createScene()
 {
@@ -58,10 +63,7 @@ bool HelloWorld::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+    auto closeItem = MenuItemImage::create(ButtonCloseNormal, ButtonCloseSelected, CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
 
     closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
                                 origin.y + closeItem->getContentSize().height/2));
@@ -78,10 +80,15 @@ bool HelloWorld::init()
 	
 	// Gamepad Key setting.
 	map.MapBool(ButtonExit, padId, gainput::PadButtonA);
+	map.MapBool(ButtonVibrate, padId, gainput::PadButtonB);
 	map.MapBool(Left, padId, gainput::PadButtonLeft);
 	map.MapBool(Right, padId, gainput::PadButtonRight);
 	map.MapBool(Up, padId, gainput::PadButtonUp);
 	map.MapBool(Down, padId, gainput::PadButtonDown);
+
+	map.MapFloat(LeftStickX, padId, gainput::PadButtonLeftStickX);
+	map.MapFloat(LeftStickY, padId, gainput::PadButtonLeftStickY);
+	//MapKeySetting(padId);
 	
 	// Sprite Setting.
 	m_pHead = Sprite::create(headFile);
@@ -116,54 +123,12 @@ void HelloWorld::update(float dt)
 		{
 			exit(0);
 		}
-	
 		CheckNewInput();
 		CheckInputRelease();
-		MoveHead();
 		st = 0.f;
 	}
 }
 
-void HelloWorld::MoveHead()
-{
-	auto moveUp = MoveBy::create(0, Vec2(0, MOVE_SPEED));
-	auto moveDown = MoveBy::create(0, Vec2(0, -MOVE_SPEED));
-	auto moveRight = MoveBy::create(0, Vec2(MOVE_SPEED, 0));
-	auto moveLeft = MoveBy::create(0, Vec2(-MOVE_SPEED, 0));
-	auto moveDOWNLEFT = MoveBy::create(0, Vec2(-MOVE_SPEED, -MOVE_SPEED));
-	auto moveDOWNRIGHT = MoveBy::create(0, Vec2(MOVE_SPEED, -MOVE_SPEED));
-	auto moveUPLEFT = MoveBy::create(0, Vec2(-MOVE_SPEED, MOVE_SPEED));
-	auto moveUPRIGHT = MoveBy::create(0, Vec2(MOVE_SPEED, MOVE_SPEED));
-
-	switch (m_keyboardInput) {
-		case DIRECTION::UP : 
-			m_pHead->runAction(moveUp);
-			break;
-		case DIRECTION::DOWN :
-			m_pHead->runAction(moveDown);
-			break;
-		case DIRECTION::RIGHT :
-			m_pHead->runAction(moveRight);
-			break;
-		case DIRECTION::LEFT :
-			m_pHead->runAction(moveLeft);
-			break;
-		case DIRECTION::DOWN_LEFT :
-			m_pHead->runAction(moveDOWNLEFT);
-			break;
-		case DIRECTION::DOWN_RIGHT :
-			m_pHead->runAction(moveDOWNRIGHT);
-			break;
-		case DIRECTION::UP_LEFT :
-			m_pHead->runAction(moveUPLEFT);
-			break;
-		case DIRECTION::UP_RIGHT :
-			m_pHead->runAction(moveUPRIGHT);
-			break;
-		Default :
-			break;
-	}
-}
 
 void HelloWorld::CheckNewInput()
 {
@@ -182,6 +147,13 @@ void HelloWorld::CheckNewInput()
 	if (map.GetBoolIsNew(Down))
 	{
 		m_keyboardInput |= DIRECTION::DOWN;
+	}
+	if (map.GetBool(LeftStickX) || map.GetBool(LeftStickY))
+	{
+		float x = map.GetFloat(LeftStickX);
+		float y = map.GetFloat(LeftStickY);
+		auto move = MoveBy::create(0, Vec2(x * MOVE_SPEED, y * MOVE_SPEED));
+		m_pHead->runAction(move);
 	}
 }
 
@@ -204,4 +176,17 @@ void HelloWorld::CheckInputRelease()
 		m_keyboardInput &= ~(DIRECTION::DOWN);
 	}
 }
+/*
+void HelloWorld::MapKeySetting(gainput::DeviceId padId)
+{
+	map.MapBool(ButtonExit, padId, gainput::PadButtonA);
+	map.MapBool(ButtonVibrate, padId, gainput::PadButtonB);
+	map.MapBool(Left, padId, gainput::PadButtonLeft);
+	map.MapBool(Right, padId, gainput::PadButtonRight);
+	map.MapBool(Up, padId, gainput::PadButtonUp);
+	map.MapBool(Down, padId, gainput::PadButtonDown);
 
+	map.MapFloat(LeftStickX, padId, gainput::PadButtonLeftStickX);
+	map.MapFloat(LeftStickY, padId, gainput::PadButtonLeftStickY);
+}
+*/
