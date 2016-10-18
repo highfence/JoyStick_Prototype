@@ -9,17 +9,19 @@ public:
 
     virtual bool init();
 	void update(float);
-	//void MapKeySetting(const gainput::DeviceId);
+	void MapKeySetting(const unsigned int);
 	void MoveHead();
-	void CheckNewInput();
-	void CheckInputRelease();
+	void StickMove();
+	void HandlingButtonInput();
 
     void menuCloseCallback(cocos2d::Ref* pSender);
 
 	cocos2d::Sprite* m_pHead;
 	unsigned int m_keyboardInput = 0;
-    // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 };
+
+
+void pressedButtonA();
 
 #endif // __HELLOWORLD_SCENE_H__

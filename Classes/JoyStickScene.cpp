@@ -10,12 +10,7 @@ gainput::InputMap map(manager);
 
 enum Button
 {
-	ButtonExit,
-	ButtonVibrate,
-	Left,
-	Right,
-	Up,
-	Down,
+	ButtonA,
 	LeftStickX,
 	LeftStickY
 };
@@ -79,16 +74,7 @@ bool HelloWorld::init()
 	const gainput::DeviceId padId = manager.CreateDevice<gainput::InputDevicePad>();
 	
 	// Gamepad Key setting.
-	map.MapBool(ButtonExit, padId, gainput::PadButtonA);
-	map.MapBool(ButtonVibrate, padId, gainput::PadButtonB);
-	map.MapBool(Left, padId, gainput::PadButtonLeft);
-	map.MapBool(Right, padId, gainput::PadButtonRight);
-	map.MapBool(Up, padId, gainput::PadButtonUp);
-	map.MapBool(Down, padId, gainput::PadButtonDown);
-
-	map.MapFloat(LeftStickX, padId, gainput::PadButtonLeftStickX);
-	map.MapFloat(LeftStickY, padId, gainput::PadButtonLeftStickY);
-	//MapKeySetting(padId);
+	MapKeySetting(padId);
 	
 	// Sprite Setting.
 	m_pHead = Sprite::create(headFile);
@@ -117,37 +103,18 @@ void HelloWorld::update(float dt)
 {
 	static float st = 0.0f;
 	st += dt;
+
 	if (st >= 0.05f) {
 		manager.Update();
-		if (map.GetBoolWasDown(ButtonExit))
-		{
-			exit(0);
-		}
-		CheckNewInput();
-		CheckInputRelease();
+		StickMove();
+		HandlingButtonInput();
 		st = 0.f;
 	}
 }
 
 
-void HelloWorld::CheckNewInput()
+void HelloWorld::StickMove()
 {
-	if (map.GetBoolIsNew(Left))
-	{
-		m_keyboardInput |= DIRECTION::LEFT;
-	}
-	if (map.GetBoolIsNew(Right))
-	{
-		m_keyboardInput |= DIRECTION::RIGHT;
-	}
-	if (map.GetBoolIsNew(Up))
-	{
-		m_keyboardInput |= DIRECTION::UP;
-	}
-	if (map.GetBoolIsNew(Down))
-	{
-		m_keyboardInput |= DIRECTION::DOWN;
-	}
 	if (map.GetBool(LeftStickX) || map.GetBool(LeftStickY))
 	{
 		float x = map.GetFloat(LeftStickX);
@@ -157,36 +124,24 @@ void HelloWorld::CheckNewInput()
 	}
 }
 
-void HelloWorld::CheckInputRelease()
-{
-	if (map.GetBoolWasDown(Left))
-	{
-		m_keyboardInput &= ~(DIRECTION::LEFT);
-	}
-	if (map.GetBoolWasDown(Right))
-	{
-		m_keyboardInput &= ~(DIRECTION::RIGHT);
-	}
-	if (map.GetBoolWasDown(Up))
-	{
-		m_keyboardInput &= ~(DIRECTION::UP);
-	}
-	if (map.GetBoolWasDown(Down))
-	{
-		m_keyboardInput &= ~(DIRECTION::DOWN);
-	}
-}
-/*
+
 void HelloWorld::MapKeySetting(gainput::DeviceId padId)
 {
-	map.MapBool(ButtonExit, padId, gainput::PadButtonA);
-	map.MapBool(ButtonVibrate, padId, gainput::PadButtonB);
-	map.MapBool(Left, padId, gainput::PadButtonLeft);
-	map.MapBool(Right, padId, gainput::PadButtonRight);
-	map.MapBool(Up, padId, gainput::PadButtonUp);
-	map.MapBool(Down, padId, gainput::PadButtonDown);
-
+	map.MapBool(ButtonA, padId, gainput::PadButtonA);
 	map.MapFloat(LeftStickX, padId, gainput::PadButtonLeftStickX);
 	map.MapFloat(LeftStickY, padId, gainput::PadButtonLeftStickY);
 }
-*/
+
+void pressedButtonA()
+{
+	exit(0);
+}
+
+void HelloWorld::HandlingButtonInput()
+{
+	void(*handler[4])();
+
+	handler[0] = pressedButtonA;
+	
+
+}
