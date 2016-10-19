@@ -50,12 +50,49 @@ Line2는 매니저에 디바이스를 만들어주는 함수입니다. CreateDev
 그 이후 cocos2d-x의 update함수 안에 manager.Update() 함수를 넣어주고, 조건을 통하여 버튼이 눌렸는지 아닌지 확인해줍니다. <br>
 cocos2d-x에서 keyPressed와 keyReleased가 있는 것 처럼, map안에도 GetBoolIsNew와 GetBoolWasDown을 통하여 같은 역할을 할 수 있습니다. <br>
 
+## 스틱 입력
+서형석 교수님께서 알려주신 내용. <br>
+키 세팅을 우선 MapBool이 아닌 MapFloat로 받아주어야 한다. <br>
+```
+map.MapFloat(LeftStickX, padId, gainput::PadButtonLeftStickX);
+map.MapFloat(LeftStickY, padId, gainput::PadButtonLeftStickY);
+```
+그 후, 사용할 때 float로 받으면 스틱 입력의 유닛 벡터를 알 수 있다.
+```
+float x = map.GetFloat(LeftStickX);
+float y = map.GetFloat(LeftStickY);
+```
+
+서형석 교수님이 보내주신 키 맵핑
+```
+  map.MapBool(ButtonA, padId, gainput::PadButtonA);
+  map.MapBool(ButtonB, padId, gainput::PadButtonB);
+  map.MapBool(ButtonX, padId, gainput::PadButtonX);
+  map.MapBool(ButtonY, padId, gainput::PadButtonY);
+
+  map.MapBool(DPAD_LEFT, padId, gainput::PadButtonLeft);
+  map.MapBool(DPAD_RIGHT, padId, gainput::PadButtonRight);
+  map.MapBool(DPAD_UP, padId, gainput::PadButtonUp);
+  map.MapBool(DPAD_DOWN, padId, gainput::PadButtonDown);
+
+  map.MapBool(PadButtonL1, padId, gainput::PadButtonL1);
+  map.MapBool(PadButtonL2, padId, gainput::PadButtonL2);
+  map.MapBool(PadButtonR1, padId, gainput::PadButtonR1);
+  map.MapBool(PadButtonR2, padId, gainput::PadButtonR2);
+
+  map.MapFloat(LeftStickX, padId, gainput::PadButtonLeftStickX);
+  map.MapFloat(LeftStickY, padId, gainput::PadButtonLeftStickY);
+
+  map.MapFloat(RightStickX, padId, gainput::PadButtonRightStickX);
+  map.MapFloat(RightStickY, padId, gainput::PadButtonRightStickY);
+```
+
 
 ## 아쉬운 점.
 외부 라이브러리를 설치하는 경험이 처음이라 많이 막혔던 점.<br>
 그 중에서도 예상치 못한 에러가 나서 시간을 많이 까먹음 <br>
-라이브러리안에서 스틱을 지원하는 함수를 찾지 못하여 스틱으로 구현을 하지 못한 점 <br>
-이 이후 스틱을 지원하는 다른 외부 라이브러리를 사용해야 할 지? 어떻게 해야할지 고민입니다. <br>
+
+
 
 
 ## Thanks To.
